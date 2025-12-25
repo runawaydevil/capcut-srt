@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Texto para SRT Aprimorado</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary-color: #475569;
+            --accent-color: #64748b;
+            --bg-gradient-start: #1e293b;
+            --bg-gradient-end: #334155;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #cbd5e1;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            padding: 40px;
+            margin: 20px 0;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: var(--transition);
+            background: #f9fafb;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-item strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .config-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .config-panel.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .config-header h3 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .config-item label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .config-item input,
+        .config-item select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .config-item input:focus,
+        .config-item select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            width: 100%;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-color), #334155);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error-color), #b91c1c);
+            color: white;
+        }
+
+        .btn-link {
+            background: transparent;
+            color: var(--primary-color);
+            box-shadow: none;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-link:hover {
+            background: rgba(99, 102, 241, 0.1);
+            transform: none;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .botoes .btn {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #downloadBtn, #limparBtn, #copiarBtn {
+            display: none;
+        }
+
+        #downloadBtn.show, #limparBtn.show, #copiarBtn.show {
+            display: inline-flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .resultado-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .resultado-container.show {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .resultado-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .resultado-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .resultado-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .resultado-stats .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resultado-stats .stat strong {
+            color: var(--primary-color);
+        }
+
+        #resultado {
+            white-space: pre-wrap;
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--border-color);
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        #resultado:empty::before {
+            content: 'Nenhum resultado ainda. Converta um texto para ver o resultado aqui.';
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid rgba(99, 102, 241, 0.1);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-top: 15px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid var(--success-color);
+        }
+
+        .message.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid var(--warning-color);
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid var(--error-color);
+        }
+
+        .validation-info {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f1f5f9;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .validation-info.show {
+            display: block;
+        }
+
+        .validation-info.valid {
+            background: #d1fae5;
+            border-color: var(--success-color);
+            color: #065f46;
+        }
+
+        .validation-info.invalid {
+            background: #fee2e2;
+            border-color: var(--error-color);
+            color: #991b1b;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 24px;
+                margin: 10px 0;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+
+            textarea {
+                min-height: 150px;
+                font-size: 0.95rem;
+            }
+
+            .stats {
+                font-size: 0.8rem;
+                gap: 12px;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
+
+            .botoes .btn {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .resultado-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            #resultado {
+                max-height: 300px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        /* Scrollbar personalizada */
+        #resultado::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #resultado::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        #resultado::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        #resultado::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Conversor de Texto para SRT</h1>
+        
+        <form id="conversorForm">
+            <div class="form-group">
+                <label for="textoInput">Cole seu texto aqui:</label>
+                <textarea 
+                    id="textoInput" 
+                    required 
+                    placeholder="Digite ou cole o texto que deseja converter para formato SRT (legendas)..."
+                ></textarea>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span>📝 Caracteres:</span>
+                        <strong id="charCount">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>📄 Palavras:</span>
+                        <strong id="wordCount">0</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎯 Blocos estimados:</span>
+                        <strong id="blockCount">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-panel" id="configPanel">
+                <div class="config-header" onclick="toggleConfig()">
+                    <h3>⚙️ Configurações Avançadas</h3>
+                    <span id="configToggle">▼</span>
+                </div>
+                <div id="configContent">
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <label for="charsPerBlock">Caracteres por bloco:</label>
+                            <input type="number" id="charsPerBlock" min="50" max="1000" value="500">
+                        </div>
+                        <div class="config-item">
+                            <label for="wordsPerBlock">Palavras por bloco (máx):</label>
+                            <input type="number" id="wordsPerBlock" min="20" max="200" value="100">
+                        </div>
+                        <div class="config-item">
+                            <label for="durationBlock">Duração por bloco (segundos):</label>
+                            <input type="number" id="durationBlock" min="5" max="120" value="30" step="1">
+                        </div>
+                        <div class="config-item">
+                            <label for="intervalBlock">Intervalo entre blocos (segundos):</label>
+                            <input type="number" id="intervalBlock" min="0" max="60" value="10" step="1">
+                        </div>
+                        <div class="config-item">
+                            <label for="breakMode">Modo de quebra:</label>
+                            <select id="breakMode">
+                                <option value="inteligente">Inteligente (recomendado)</option>
+                                <option value="frase">Por frase</option>
+                                <option value="paragrafo">Por parágrafo</option>
+                                <option value="fixo">Fixo (por caracteres)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button type="submit" class="btn btn-primary">
+                    <span>✨</span> Converter para SRT
+                </button>
+                <button type="button" class="btn btn-link" onclick="toggleConfig()">
+                    <span>⚙️</span> Configurações
+                </button>
+            </div>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processando texto...</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="message success" id="successMessage">
+            ✓ Conversão realizada com sucesso!
+        </div>
+
+        <div class="message warning" id="warningMessage" style="display: none;">
+            ⚠️ Atenção: Verifique o resultado
+        </div>
+
+        <div class="botoes">
+            <button id="copiarBtn" class="btn btn-success">
+                <span>📋</span> Copiar
+            </button>
+            <button id="downloadBtn" class="btn btn-secondary">
+                <span>💾</span> Download SRT
+            </button>
+            <button type="button" id="limparBtn" class="btn btn-danger">
+                <span>🗑️</span> Limpar
+            </button>
+        </div>
+
+        <div class="resultado-container" id="resultadoContainer">
+            <div class="resultado-header">
+                <h2>📋 Resultado:</h2>
+                <div class="resultado-stats" id="resultadoStats"></div>
+            </div>
+            <div id="resultado"></div>
+            <div class="validation-info" id="validationInfo"></div>
+        </div>
+    </div>
+
+    <footer>
+        Desenvolvido por Nevkoz
+    </footer>
+
+    <script>
+        (function() {
+            // ============================================
+            // MÓDULO: Configurações
+            // ============================================
+            const Config = {
+                charsPerBlock: 500,
+                wordsPerBlock: 100,
+                durationBlock: 30,
+                intervalBlock: 10,
+                breakMode: 'inteligente'
+            };
+
+            function loadConfig() {
+                Config.charsPerBlock = parseInt(document.getElementById('charsPerBlock').value) || 500;
+                Config.wordsPerBlock = parseInt(document.getElementById('wordsPerBlock').value) || 100;
+                Config.durationBlock = parseFloat(document.getElementById('durationBlock').value) || 30;
+                Config.intervalBlock = parseFloat(document.getElementById('intervalBlock').value) || 10;
+                Config.breakMode = document.getElementById('breakMode').value || 'inteligente';
+            }
+
+            window.toggleConfig = function() {
+                const panel = document.getElementById('configPanel');
+                const content = document.getElementById('configContent');
+                const toggle = document.getElementById('configToggle');
+                
+                if (panel.classList.contains('show')) {
+                    panel.classList.remove('show');
+                    content.style.display = 'none';
+                    toggle.textContent = '▶';
+                } else {
+                    panel.classList.add('show');
+                    content.style.display = 'block';
+                    toggle.textContent = '▼';
+                }
+            };
+
+            // ============================================
+            // MÓDULO: Processador de Texto
+            // ============================================
+            const TextProcessor = {
+                /**
+                 * Normaliza o texto preservando estrutura
+                 * Remove espaços múltiplos mas mantém quebras de linha e parágrafos
+                 */
+                normalize(text) {
+                    // Preservar quebras de linha
+                    let normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                    
+                    // Normalizar espaços múltiplos em uma linha, mas manter quebras
+                    normalized = normalized.replace(/[ \t]+/g, ' ');
+                    
+                    // Remover espaços no início e fim de linhas
+                    normalized = normalized.split('\n').map(line => line.trim()).join('\n');
+                    
+                    // Remover linhas vazias múltiplas (máximo 2 consecutivas)
+                    normalized = normalized.replace(/\n{3,}/g, '\n\n');
+                    
+                    return normalized.trim();
+                },
+
+                /**
+                 * Divide texto em palavras preservando espaços e quebras
+                 */
+                splitIntoWords(text) {
+                    const words = [];
+                    let currentWord = '';
+                    let inWord = false;
+
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        const isWhitespace = /\s/.test(char);
+                        const isNewline = char === '\n';
+
+                        if (isWhitespace) {
+                            if (inWord) {
+                                words.push({ text: currentWord, type: 'word' });
+                                currentWord = '';
+                                inWord = false;
+                            }
+                            if (isNewline) {
+                                words.push({ text: '\n', type: 'newline' });
+                            } else {
+                                words.push({ text: char, type: 'space' });
+                            }
+                        } else {
+                            currentWord += char;
+                            inWord = true;
+                        }
+                    }
+
+                    if (currentWord) {
+                        words.push({ text: currentWord, type: 'word' });
+                    }
+
+                    return words;
+                },
+
+                /**
+                 * Conta palavras no texto
+                 */
+                countWords(text) {
+                    return text.trim() ? text.trim().split(/\s+/).filter(w => w.length > 0).length : 0;
+                }
+            };
+
+            // ============================================
+            // MÓDULO: Segmentador
+            // ============================================
+            const Segmenter = {
+                /**
+                 * Encontra o melhor ponto de quebra no texto
+                 */
+                findBreakPoint(text, maxChars, maxWords, mode) {
+                    if (text.length <= maxChars) {
+                        return text.length;
+                    }
+
+                    if (mode === 'fixo') {
+                        return maxChars;
+                    }
+
+                    // Buscar pontos de quebra naturais
+                    const breakChars = mode === 'paragrafo' 
+                        ? ['\n\n', '\n'] 
+                        : mode === 'frase'
+                        ? ['. ', '! ', '? ', '.\n', '!\n', '?\n']
+                        : ['. ', '! ', '? ', ', ', '; ', ':\n', '.\n', '!\n', '?\n', '\n\n', '\n'];
+
+                    let bestBreak = maxChars;
+                    let bestScore = 0;
+
+                    // Buscar do final para o início
+                    for (let i = Math.min(text.length, maxChars); i >= Math.max(0, maxChars - 200); i--) {
+                        const char = text[i];
+                        const nextChar = text[i + 1] || '';
+
+                        // Verificar se é um ponto de quebra natural
+                        for (const breakChar of breakChars) {
+                            if (breakChar.length === 1 && char === breakChar[0]) {
+                                const score = breakChar === '\n\n' ? 10 : breakChar === '\n' ? 5 : 3;
+                                if (score > bestScore) {
+                                    bestBreak = i + 1;
+                                    bestScore = score;
+                                }
+                            } else if (breakChar.length === 2 && char === breakChar[0] && nextChar === breakChar[1]) {
+                                const score = breakChar === '\n\n' ? 10 : 5;
+                                if (score > bestScore) {
+                                    bestBreak = i + 2;
+                                    bestScore = score;
+                                }
+                            }
+                        }
+
+                        // Verificar limite de palavras
+                        const textSoFar = text.substring(0, i);
+                        const wordCount = TextProcessor.countWords(textSoFar);
+                        if (wordCount >= maxWords && bestScore < 2) {
+                            // Quebrar no último espaço antes deste ponto
+                            const lastSpace = text.lastIndexOf(' ', i);
+                            if (lastSpace > maxChars * 0.7) {
+                                bestBreak = lastSpace + 1;
+                                bestScore = 1;
+                            }
+                        }
+                    }
+
+                    // Se não encontrou ponto bom, quebrar no espaço mais próximo
+                    if (bestScore === 0) {
+                        const lastSpace = text.lastIndexOf(' ', maxChars);
+                        if (lastSpace > maxChars * 0.5) {
+                            bestBreak = lastSpace + 1;
+                        }
+                    }
+
+                    return Math.max(1, Math.min(bestBreak, text.length));
+                },
+
+                /**
+                 * Segmenta texto em blocos respeitando limites
+                 */
+                segment(text, config) {
+                    const segments = [];
+                    let remaining = text;
+                    let totalProcessed = 0;
+
+                    while (remaining.length > 0) {
+                        const maxChars = config.charsPerBlock;
+                        const maxWords = config.wordsPerBlock;
+
+                        if (remaining.length <= maxChars) {
+                            segments.push(remaining.trim());
+                            totalProcessed += remaining.length;
+                            break;
+                        }
+
+                        const breakPoint = this.findBreakPoint(remaining, maxChars, maxWords, config.breakMode);
+                        const segment = remaining.substring(0, breakPoint).trim();
+                        
+                        if (segment.length > 0) {
+                            segments.push(segment);
+                            totalProcessed += breakPoint;
+                        }
+
+                        remaining = remaining.substring(breakPoint).trim();
+                    }
+
+                    return { segments, totalProcessed };
+                }
+            };
+
+            // ============================================
+            // MÓDULO: Formatador SRT
+            // ============================================
+            const SRTFormatter = {
+                formatTime(seconds) {
+                    const hours = Math.floor(seconds / 3600);
+                    const minutes = Math.floor((seconds % 3600) / 60);
+                    const secs = Math.floor(seconds % 60);
+                    const ms = Math.floor((seconds % 1) * 1000);
+
+                    return `${this.pad(hours)}:${this.pad(minutes)}:${this.pad(secs)},${this.pad(ms, 3)}`;
+                },
+
+                pad(num, size = 2) {
+                    return num.toString().padStart(size, '0');
+                },
+
+                formatBlock(index, startTime, endTime, text) {
+                    return `${index}\n${this.formatTime(startTime)} --> ${this.formatTime(endTime)}\n${text.trim()}\n\n`;
+                },
+
+                generateSRT(segments, config) {
+                    let srt = '';
+                    let currentTime = 0;
+
+                    segments.forEach((segment, index) => {
+                        const startTime = currentTime;
+                        const endTime = startTime + config.durationBlock;
+                        
+                        srt += this.formatBlock(index + 1, startTime, endTime, segment);
+                        
+                        currentTime = endTime + config.intervalBlock;
+                    });
+
+                    return srt.trim();
+                }
+            };
+
+            // ============================================
+            // MÓDULO: Validador
+            // ============================================
+            const Validator = {
+                /**
+                 * Extrai todo o texto dos blocos SRT
+                 */
+                extractTextFromSRT(srt) {
+                    const lines = srt.split('\n');
+                    const textLines = [];
+                    let skipNext = false;
+
+                    for (let i = 0; i < lines.length; i++) {
+                        if (skipNext) {
+                            skipNext = false;
+                            continue;
+                        }
+
+                        const line = lines[i].trim();
+                        
+                        // Pular números de sequência
+                        if (/^\d+$/.test(line)) {
+                            skipNext = true; // Pular linha de tempo
+                            continue;
+                        }
+                        
+                        // Pular linhas de tempo
+                        if (line.includes('-->')) {
+                            continue;
+                        }
+                        
+                        // Adicionar texto
+                        if (line.length > 0) {
+                            textLines.push(line);
+                        }
+                    }
+
+                    return textLines.join(' ').trim();
+                },
+
+                /**
+                 * Valida integridade da conversão
+                 */
+                validate(originalText, srtText) {
+                    const originalNormalized = TextProcessor.normalize(originalText)
+                        .replace(/\n/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                        .toLowerCase();
+                    
+                    const srtExtracted = this.extractTextFromSRT(srtText)
+                        .replace(/\s+/g, ' ')
+                        .trim()
+                        .toLowerCase();
+
+                    const originalWords = TextProcessor.countWords(originalText);
+                    const srtWords = srtExtracted.split(/\s+/).filter(w => w.length > 0).length;
+
+                    const originalChars = originalNormalized.length;
+                    const srtChars = srtExtracted.length;
+
+                    const wordsMatch = Math.abs(originalWords - srtWords) <= 1; // Tolerância de 1 palavra
+                    const charsMatch = Math.abs(originalChars - srtChars) <= originalChars * 0.05; // 5% de tolerância
+
+                    return {
+                        valid: wordsMatch && charsMatch,
+                        originalWords,
+                        srtWords,
+                        originalChars,
+                        srtChars,
+                        wordsDiff: Math.abs(originalWords - srtWords),
+                        charsDiff: Math.abs(originalChars - srtChars)
+                    };
+                }
+            };
+
+            // ============================================
+            // MÓDULO: Conversor Principal
+            // ============================================
+            const Converter = {
+                /**
+                 * Converte texto para SRT garantindo integridade
+                 */
+                convert(text) {
+                    try {
+                        // Pré-processar texto
+                        const normalized = TextProcessor.normalize(text);
+                        
+                        if (!normalized) {
+                            throw new Error('Texto vazio após normalização');
+                        }
+
+                        // Carregar configurações
+                        loadConfig();
+
+                        // Segmentar texto
+                        const { segments } = Segmenter.segment(normalized, Config);
+
+                        if (segments.length === 0) {
+                            throw new Error('Nenhum segmento gerado');
+                        }
+
+                        // Gerar SRT
+                        const srt = SRTFormatter.generateSRT(segments, Config);
+
+                        // Validar
+                        const validation = Validator.validate(text, srt);
+
+                        return {
+                            srt,
+                            segments,
+                            validation,
+                            stats: {
+                                totalBlocks: segments.length,
+                                totalDuration: (segments.length * Config.durationBlock) + 
+                                             ((segments.length - 1) * Config.intervalBlock),
+                                avgCharsPerBlock: Math.round(segments.reduce((sum, s) => sum + s.length, 0) / segments.length)
+                            }
+                        };
+                    } catch (error) {
+                        console.error('Erro na conversão:', error);
+                        throw error;
+                    }
+                }
+            };
+
+            // ============================================
+            // Interface e Event Handlers
+            // ============================================
+            const textoInput = document.getElementById('textoInput');
+            const charCount = document.getElementById('charCount');
+            const wordCount = document.getElementById('wordCount');
+            const blockCount = document.getElementById('blockCount');
+            const resultado = document.getElementById('resultado');
+            const resultadoContainer = document.getElementById('resultadoContainer');
+            const resultadoStats = document.getElementById('resultadoStats');
+            const validationInfo = document.getElementById('validationInfo');
+            const loading = document.getElementById('loading');
+            const progressFill = document.getElementById('progressFill');
+            const successMessage = document.getElementById('successMessage');
+            const warningMessage = document.getElementById('warningMessage');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const limparBtn = document.getElementById('limparBtn');
+            const copiarBtn = document.getElementById('copiarBtn');
+
+            let currentSRT = '';
+            let currentStats = null;
+
+            function atualizarEstatisticas() {
+                const texto = textoInput.value;
+                const chars = texto.length;
+                const words = TextProcessor.countWords(texto);
+                loadConfig();
+                const estimatedBlocks = Math.ceil(chars / Config.charsPerBlock);
+
+                charCount.textContent = chars.toLocaleString('pt-BR');
+                wordCount.textContent = words.toLocaleString('pt-BR');
+                blockCount.textContent = estimatedBlocks;
+            }
+
+            textoInput.addEventListener('input', atualizarEstatisticas);
+
+            // Atualizar estimativas quando config mudar
+            ['charsPerBlock', 'wordsPerBlock', 'durationBlock', 'intervalBlock', 'breakMode'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('change', atualizarEstatisticas);
+                }
+            });
+
+            function downloadSRT(conteudo) {
+                const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'legendas.srt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function copiarParaClipboard(texto) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    const btn = copiarBtn;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span>✓</span> Copiado!';
+                    btn.style.background = 'linear-gradient(135deg, #059669, #047857)';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Erro ao copiar:', err);
+                    alert('Erro ao copiar para a área de transferência');
+                });
+            }
+
+            function mostrarMensagemSucesso() {
+                successMessage.classList.add('show');
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 3000);
+            }
+
+            function mostrarValidacao(validation, stats) {
+                validationInfo.className = 'validation-info';
+                
+                if (validation.valid) {
+                    validationInfo.classList.add('show', 'valid');
+                    validationInfo.innerHTML = `
+                        ✓ <strong>Validação bem-sucedida!</strong><br>
+                        Palavras: ${validation.originalWords} original → ${validation.srtWords} no SRT<br>
+                        Caracteres: ${validation.originalChars} original → ${validation.srtChars} no SRT<br>
+                        Blocos gerados: ${stats.totalBlocks} | Duração total: ${Math.round(stats.totalDuration)}s
+                    `;
+                } else {
+                    validationInfo.classList.add('show', 'invalid');
+                    validationInfo.innerHTML = `
+                        ⚠️ <strong>Atenção:</strong> Diferenças detectadas na validação<br>
+                        Palavras: ${validation.originalWords} original → ${validation.srtWords} no SRT (dif: ${validation.wordsDiff})<br>
+                        Caracteres: ${validation.originalChars} original → ${validation.srtChars} no SRT (dif: ${validation.charsDiff})
+                    `;
+                    warningMessage.style.display = 'block';
+                    setTimeout(() => {
+                        warningMessage.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            document.getElementById('conversorForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const texto = textoInput.value.trim();
+                
+                if (!texto) {
+                    textoInput.focus();
+                    return;
+                }
+
+                loading.classList.add('show');
+                resultadoContainer.classList.remove('show');
+                validationInfo.classList.remove('show');
+                progressFill.style.width = '0%';
+                
+                // Simular progresso
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    progressFill.style.width = progress + '%';
+                    if (progress >= 90) {
+                        clearInterval(progressInterval);
+                    }
+                }, 50);
+                
+                setTimeout(() => {
+                    try {
+                        const result = Converter.convert(texto);
+                        currentSRT = result.srt;
+                        currentStats = result.stats;
+                        
+                        progressFill.style.width = '100%';
+                        
+                        setTimeout(() => {
+                            resultado.textContent = result.srt;
+                            resultadoStats.innerHTML = `
+                                <div class="stat">
+                                    <span>📦 Blocos:</span>
+                                    <strong>${result.stats.totalBlocks}</strong>
+                                </div>
+                                <div class="stat">
+                                    <span>⏱️ Duração:</span>
+                                    <strong>${Math.round(result.stats.totalDuration)}s</strong>
+                                </div>
+                                <div class="stat">
+                                    <span>📊 Média:</span>
+                                    <strong>${result.stats.avgCharsPerBlock} chars/bloco</strong>
+                                </div>
+                            `;
+                            
+                            loading.classList.remove('show');
+                            resultadoContainer.classList.add('show');
+                            downloadBtn.classList.add('show');
+                            limparBtn.classList.add('show');
+                            copiarBtn.classList.add('show');
+                            
+                            mostrarValidacao(result.validation, result.stats);
+                            mostrarMensagemSucesso();
+                            resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 200);
+                    } catch (error) {
+                        loading.classList.remove('show');
+                        alert('Erro ao converter: ' + error.message);
+                        console.error(error);
+                    }
+                }, 300);
+            });
+
+            downloadBtn.addEventListener('click', function() {
+                if (currentSRT) {
+                    downloadSRT(currentSRT);
+                }
+            });
+
+            copiarBtn.addEventListener('click', function() {
+                if (currentSRT) {
+                    copiarParaClipboard(currentSRT);
+                }
+            });
+
+            limparBtn.addEventListener('click', function() {
+                textoInput.value = '';
+                resultado.textContent = '';
+                resultadoStats.innerHTML = '';
+                resultadoContainer.classList.remove('show');
+                validationInfo.classList.remove('show');
+                downloadBtn.classList.remove('show');
+                limparBtn.classList.remove('show');
+                copiarBtn.classList.remove('show');
+                currentSRT = '';
+                currentStats = null;
+                atualizarEstatisticas();
+                textoInput.focus();
+            });
+
+            // Proteções (mantidas do código original)
+            document.oncontextmenu = function() { return false; };
+            document.onkeydown = function(e) {
+                if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0))) {
+                    return false;
+                }
+            };
+        })();
+    </script>
+</body>
+</html>
